@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+<meta charset="UTF-8">
+<style type="text/css">
+.profile-image img {
+    width: 50px; /* 원하는 너비로 설정 */
+    height: 50px; /* 원하는 높이로 설정 */
+    border-radius: 50%; /* 동그란 모양으로 만들기 */
+}
+.results-container {
+    margin-top: 20px; /* 결과 간격 조정 */
+}
+
+.result-card {
+    display: flex;
+    align-items: center; /* 수직 정렬 */
+    margin-bottom: 20px; /* 카드 간격 */
+}
+
+.result-card-link {
+    text-decoration: none; /* 밑줄 제거 */
+    display: block; /* 전체 카드 영역 클릭 가능하도록 설정 */
+    color: inherit; /* 텍스트 색상 유지 */
+}
+
+.result-card-link:hover {
+	background-color: rgba(0, 0, 0, 0.05);
+    text-decoration: none; /* 호버 상태에서도 밑줄 제거 */
+    color: inherit; /* 호버 상태에서도 부모 요소의 색상 유지 */
+}
+
+.profile-image {
+    margin-right: 15px; /* 이미지와 텍스트 간격 */
+}
+
+.profile-image img {
+    width: 50px; /* 프로필 사진 너비 */
+    height: 50px; /* 프로필 사진 높이 */
+    border-radius: 50%; /* 동그란 이미지 */
+}
+
+.name {
+    margin: 0; /* 기본 마진 제거 */
+    font-weight: bold; /* 이름 강조 */
+}
+
+.job {
+    margin: 0; /* 기본 마진 제거 */
+    color: grey; /* 직업 색상 */
+}
+
+</style>
+</head>
+<body>
+<div layout:fragment="content">
+<div id="container">
+<h1>사람 찾기</h1>
+
+<!-- 검색 폼 -->
+<form action="/search/findJob" method="get" style="display: flex; align-items: center;">
+    <div class="dropdown">
+        <select name="searchType" style="height: 35px; margin-right: 10px;">
+            <option value="name" th:selected="${param.searchType == 'name'}">이름</option>
+            <option value="job" th:selected="${param.searchType == 'job'}">직업</option>
+        </select>
+    </div>
+    <input type="text" name="search_input" placeholder="search" th:value="${param.search_input}" style="height: 35px;"/>
+    <button type="submit" style="height: 35px;">검색</button>
+</form>
+
+<!-- 검색 결과 표시 -->
+		<div class="results-container">
+            <!-- 검색 결과가 있을 때만 반복 출력 -->
+            <a th:href="@{/user/yourPage(yourid=${member.memberId})}" th:each="member : ${list}" class="result-card-link">
+			    <div class="result-card">
+			        <div class="profile-image">
+			            <img th:src="@{|/upload/${member.profileDto.stored_name}|}" alt="프로필 사진" style="width: 50px; height: 50px;"/>
+			        </div>
+			        <div class="result-info">
+			            <p class="name" th:text="${member.name}">작성자 이름</p>
+			            <p class="job" th:text="${member.job}">직업</p>
+			        </div>
+			    </div>
+			</a>
+
+            <!-- 검색 결과가 없을 때 빈 행을 표시 -->
+            <div th:if="${list == null || list.isEmpty()}" class="no-results">
+                검색 결과가 없습니다.
+            </div>
+        </div>
+
+
+</div>
+</div>
+</body>
+</html>

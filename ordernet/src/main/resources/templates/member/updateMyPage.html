@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+<meta charset="UTF-8">
+<title>MyPage</title>
+<style type="text/css">
+    /* Behance 스타일의 배경 및 프로필 레이아웃 */
+    #background {
+        position: relative;
+        width: 80%;
+        margin: 0 auto;
+        height: 400px;
+        background-size: cover;
+        background-position: center;
+    }
+    #profile-info {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: white;
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+    }
+    .edit-btn {
+        background-color: #ffc0cb;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 0.9em;
+        cursor: pointer;
+        text-decoration: none;
+    }
+</style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div id="container">
+        <!-- 프로필 수정 폼 -->
+        <form action="/user/updateProfile" method="post" enctype="multipart/form-data">
+            <!-- 배경 이미지 업로드 -->
+            <label>배경 이미지:</label>
+            <input type="file" name="background" accept="image/*">
+            
+            <!-- 프로필 사진 업로드 -->
+            <label>프로필 사진:</label>
+            <input type="file" name="profilephoto" accept="image/*">
+            
+            <!-- 이름 입력 -->
+            <label>이름:</label>
+            <input type="text" name="name" th:value="${session.mdto.name}">
+            
+            <!-- 직업 입력 -->
+            <label>직업:</label>
+            <input type="text" name="job" th:value="${session.mdto.job}">
+            
+            <label>주소:</label>
+            <input type="text" name="address" th:value="${session.mdto.address}">
+            
+            <label>이메일:</label>
+            <input type="text" name="email" th:value="${session.mdto.email}">
+            
+            <!-- 완료 버튼 -->
+            <button type="submit" class="edit-btn">완료</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

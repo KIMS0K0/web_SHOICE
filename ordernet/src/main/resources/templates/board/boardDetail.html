@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+<meta charset="UTF-8">
+<title>상세보기</title>
+<script type="text/javascript">
+	function updateEX(){
+		if(confirm("수정하시겠습니까?")){
+			return true;
+		}
+		return false;
+	}
+</script>
+<style type="text/css">
+    /* 스타일 정의 */
+    #title {
+        text-align: center;
+        font-size: 2em;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+    #author {
+        text-align: center;
+        margin: 20px 0;
+    }
+    #author .profile {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid #ddd;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+    #author img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    #author .name {
+        font-size: 1em;
+        color: #888;
+    }
+    #divider {
+        width: 80%;
+        margin: 20px auto;
+        border-bottom: 1px solid #ddd;
+    }
+    #content {
+        width: 80%;
+        margin: 30px auto;
+        font-size: 1.2em;
+        line-height: 1.6;
+    }
+    #comments {
+        width: 80%;
+        margin: 40px auto;
+    }
+    #comments input[type="text"] {
+        width: calc(100% - 100px);
+        padding: 10px;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    #comments button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #comments button:hover {
+        background-color: #0056b3;
+    }
+    /* 댓글 스타일 정의 */
+    .comment {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .comment .profile {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 20px;
+    }
+    .comment img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .comment-content {
+        flex: 1;
+    }
+    .comment-author {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .comment-text {
+        margin-bottom: 5px;
+    }
+    .comment-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .comment-actions button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #007bff;
+        padding: 5px 10px;
+    }
+    .comment-actions button:hover {
+        color: #0056b3;
+    }
+    .comment-actions .more-button {
+        font-size: 1.5em;
+        color: #888;
+    }
+</style>
+</head>
+<body>
+<div layout:fragment="content">
+<div id="container">
+    <!-- 제목 -->
+    <div id="title" th:text="${dto.title}"></div>
+
+    <!-- 작성자 정보 -->
+    <div id="author">
+        <div class="profile">
+            <img th:src="@{|/upload/${bdto.profileDto.stored_name}|}" alt="Profile Photo">
+        </div>
+        <div class="name" th:text="${bdto.name}"></div>
+    </div>
+
+    <!-- 구분선 -->
+    <div id="divider"></div>
+
+    <!-- 내용 -->
+    <div id="content" th:text="${dto.content}" style="white-space: pre-wrap;">이곳에 줄글 내용이 들어갑니다.</div>
+
+    <!-- 댓글 입력 -->
+    <div id="comments">
+        <form action="/board/addComment" method="post">
+            <input type="hidden" name="board_seq" th:value="${dto.board_seq}"/>
+            <input type="text" name="commentContent" placeholder="댓글을 입력하세요" required>
+            <button type="submit">댓글 등록</button>
+        </form>
+    </div>
+
+    <!-- 댓글 목록 -->
+<div id="comments-section" th:if="${comments != null && !comments.isEmpty()}">
+    <h3>댓글 목록</h3>
+    <div th:each="comment : ${comments}" class="comment">
+        <div class="profile">
+            <img th:src="@{|/upload/${comment.member.profileDto.stored_name}|}" alt="Profile Photo" th:if="${comment.member.profileDto != null}"/>
+        </div>
+        <div class="comment-content">
+            <p class="comment-author" th:text="${comment.member.name}">작성자 이름</p>
+            <p class="comment-text" th:text="${comment.content}">댓글 내용</p>
+            <p class="comment-date" th:text="${#dates.format(comment.regdate, 'yyyy-MM-dd HH:mm')}"></p>
+            <div class="comment-actions">
+                <button type="button" class="reply-button">답글</button>
+                <button type="button" class="more-button" th:if="${session.mdto != null && (session.mdto.id == dto.id || session.mdto.id == comment.id)}">⋮</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- 수정/삭제/목록 버튼 -->
+    <form action="/board/boardUpdate" method="post" onsubmit="return updateEX()" th:object="${updateBoardCommand}">
+        <div class="button-group">
+            <th:block th:if="${session.mdto != null && session.mdto.id == dto.id}">
+                <button type="button" class="btn" th:onclick="|location.href='@{/board/boardUpdate(board_seq=${dto.board_seq})}'|">수정</button>
+                <button type="button" class="btn" th:onclick="|location.href='@{/board/mulDel(seq=${dto.board_seq})}'|">삭제</button>
+            </th:block>
+            <button type="button" class="btn" th:onclick="|location.href='@{/board/boardList}'|">목록</button>
+        </div>
+    </form>
+</div>
+</div>
+</body>
+</html>

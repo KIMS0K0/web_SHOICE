@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sk.board.mapper.ProfileMapper">
+
+	<insert id="insertProfile" parameterType="String">
+	    INSERT INTO PROFILE (file_seq, id, origin_name, stored_name)
+	    VALUES (NULL, #{id}, 'WIN_20220925_18_30_28_Pro.jpg', '287720b8-3bc8-45d9-9058-f59b8a3cbd27.jpg');
+	</insert>
+
+	<select id="getProfile" parameterType="String" resultType="profileDto">
+        SELECT file_seq, id, origin_name, stored_name
+        FROM PROFILE
+        WHERE id = #{id}
+    </select>
+</mapper>
+
+
+
+

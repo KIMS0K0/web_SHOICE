@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sk.board.mapper.CommentMapper">
+
+    <!-- MemberDto에 대한 별도의 resultMap 정의 -->
+    <resultMap id="commentResultMap" type="CommentDto">
+    <id property="comment_seq" column="comment_seq"/>
+    <result property="board_seq" column="board_seq"/>
+    <result property="id" column="id"/>
+    <result property="content" column="content"/>
+    <result property="regdate" column="regdate"/>
+
+    <association property="member" javaType="MemberDto">
+        <id property="memberId" column="memberid"/>
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="address" column="address"/>
+        <result property="role" column="role"/>
+        <result property="job" column="job"/>
+        <association property="profileDto" javaType="ProfileDto">
+            <id property="file_seq" column="file_seq"/>
+            <result property="stored_name" column="stored_name"/>
+        </association>
+    </association>
+</resultMap>
+
+<select id="getComments" parameterType="Integer" resultMap="commentResultMap">
+    SELECT c.comment_seq, c.board_seq, c.id, c.content, c.regdate,
+           m.memberid, m.id AS member_id, m.name, m.email, m.address, m.role, m.job,
+           p.file_seq, p.stored_name
+    FROM comment c
+    LEFT JOIN member m ON c.id = m.id
+    LEFT JOIN profile p ON m.id = p.id
+    WHERE c.board_seq = #{board_seq}
+    ORDER BY c.regdate DESC;
+</select>
+
+    <!-- 댓글 삽입 쿼리 -->
+    <insert id="addComment" parameterType="CommentDto">
+        INSERT INTO comment (comment_seq, board_seq, id, content, regdate)
+        VALUES (NULL, #{board_seq}, #{id}, #{content}, NOW());
+    </insert>
+
+</mapper>
