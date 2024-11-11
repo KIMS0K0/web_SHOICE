@@ -1,131 +1,150 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 <head>
 <meta charset="UTF-8">
 <title>MyPage</title>
 <style type="text/css">
-/* Behance 스타일의 배경 및 프로필 레이아웃 */
-#background {
-    position: relative;
-    width: 80%; /* 화면 크기에 따라 너비 조정 */
-    margin: 0 auto; /* 중앙 정렬 */
-    height: 400px; /* 원하는 높이로 조정 */
-}
+    /* 배경 이미지 */
+    #background {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        margin-bottom: 30px;
+        box-shadow: inset 0px 40px 20px 0px rgba(0, 0, 0, 0.05);
+    }
 
-#background::after {
-    content: '';
-    position: absolute;
-    bottom: 0; /* 아래쪽에 위치 */
-    left: 0;
-    right: 0;
-    height: 50%; /* 배경의 절반 높이 */
-    background-color: white; /* 하얀색 */
-    opacity: 1; /* 투명도 조절 (0은 완전 투명, 1은 불투명) */
-    z-index: 0; /* 텍스트 위에 나타나도록 */
-}
+    /* 메인 레이아웃 */
+    #main-content {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+    }
 
-#profile-info, #posts {
-    position: relative; /* 위치를 상대적으로 설정하여 z-index를 적용 */
-    z-index: 1; /* 텍스트와 다른 컴포넌트들이 위에 위치하도록 설정 */
-}
+    /* 프로필 정보 */
+    #profile-info {
+        width: 300px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
 
-#profile-info {
-	position: absolute;
-	bottom: 20px;
-	left: 20px;
-	color: white;
-	text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
-}
+    #profile-info img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        object-fit: cover;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    }
 
-#profile-info img {
-	width: 100px; /* 이미지 크기 증가 */
-	height: 100px;
-	border-radius: 50%;
-	margin-bottom: 10px;
-	border: 3px solid white;
-}
+    #profile-info p {
+        font-size: 1.1em;
+        color: #333;
+        margin: 5px 0;
+    }
 
-#posts {
-	position: absolute;
-	bottom: 20px;
-	left: 50%; /* 왼쪽에서 50% 떨어진 위치 */
-	transform: translateX(-50%); /* 중앙 정렬 */
-	background: rgba(0, 0, 0, 0.6);
-	padding: 20px;
-	border-radius: 10px;
-	max-height: 250px;
-	overflow-y: auto;
-	width: 300px; /* 너비 조정 */
-}
+    .edit-btn {
+    	width: 135px;
+        display: inline-block;
+        padding: 8px 12px;
+        color: #ffffff;
+        background-color: #007bff;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 1.0em;
+        margin-top: 10px;
+    }
 
-#posts h3 {
-	margin: 0;
-	padding: 0;
-	font-size: 1.2em;
-	color: #FFD700; /* 금색 */
-	text-align: center;
-}
+    /* 팔로우, 즐겨찾기 버튼 */
+    .follow-btn {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 12px;
+        color: #007bff;
+        text-decoration: none;
+        border: 1px solid #007bff;
+        border-radius: 20px;
+        font-size: 0.9em;
+        width: 135px;
+    }
 
-#posts ul {
-	list-style: none;
-	padding: 0;
-}
+    /* 게시글 리스트 */
+    #posts {
+    	height: 390px;
+        flex: 1;
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    }
 
-#posts ul li {
-	margin: 10px 0;
-	color: #fff;
-}
-/* edit 버튼 스타일 */
-.edit-btn {
-	display: inline-flex;
-	align-items: center;
-	background-color: #ffc0cb; /* 연한 핑크색 */
-	color: white;
-	border: none;
-	border-radius: 20px;
-	padding: 5px 15px;
-	font-size: 0.9em;
-	cursor: pointer;
-	text-decoration: none;
-}
+    #posts h3 {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 15px;
+    }
 
-.edit-btn i {
-	margin-right: 5px;
-}
+    #posts ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    #posts li {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    #posts li a {
+        color: #333;
+        text-decoration: none;
+        font-size: 1.1em;
+    }
+
+    #posts li span {
+        color: #999;
+        font-size: 0.9em;
+    }
 </style>
 </head>
 <body>
-	<div layout:fragment="content">
-		<div id="container">
-			<!-- 배경 이미지 -->
-			<div id="background" th:style="'background-image: url(/upload/' + ${backgroundDto.stored_name} + ')'">
-				<!-- 프로필 정보 -->
-				<div id="profile-info" th:if="${session.mdto != null}">
-					<img th:src="@{|/upload/${profileDto.stored_name}|}"
-						alt="Profile Photo">
-					<p>
-						<strong th:text="${session.mdto.name}">Name</strong>
-					</p>
-					<p th:text="${session.mdto.job}">Job</p>
-					<a th:href="@{/user/update}" class="edit-btn">edit</a>
-				</div>
+<div layout:fragment="content">
+    <div id="container">
+        <!-- 배경 이미지 -->
+        <div id="background" th:style="'background-image: url(/upload/' + ${backgroundDto.stored_name} + ')'">
+        </div>
 
-				<!-- 게시글 리스트 -->
-				<div id="posts" th:if="${session.mdto != null}">
-					<h3>내 게시글</h3>
-					<ul>
-						<li th:if="${#lists.isEmpty(list)}">--- 작성된 글이 없습니다. ---</li>
-						<li th:each="dto : ${list}" th:unless="${#lists.isEmpty(list)}">
-							<a th:href="@{/board/boardDetail(board_seq=${dto.board_seq})}"
-							th:text="${dto.title}"></a> <span
-							th:text="${#dates.format(dto.regdate, 'yyyy-MM-dd')}"></span>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
+        <!-- 메인 콘텐츠 -->
+        <div id="main-content">
+            <!-- 프로필 정보 -->
+            <div id="profile-info" th:if="${session.mdto != null}">
+                <img th:src="@{|/upload/${profileDto.stored_name}|}" alt="Profile Photo">
+                <p><strong th:text="${session.mdto.name}">Name</strong></p>
+                <p th:text="${session.mdto.job}">Job</p>
+                <a th:href="@{/user/update}" class="edit-btn">edit</a>
+                <hr>
+                <a th:href="@{/follow/followlistGet}" class="follow-btn">팔로우 보러가기</a>
+                <a th:href="@{/bookmark/bookmarklistGet}" class="follow-btn">즐겨찾기 보러가기</a>
+            </div>
+
+            <!-- 게시글 리스트 -->
+            <div id="posts" th:if="${session.mdto != null}">
+                <h3>내 게시글</h3>
+                <ul>
+                    <li th:if="${#lists.isEmpty(list)}">--- 작성된 글이 없습니다. ---</li>
+                    <li th:each="dto : ${list}" th:unless="${#lists.isEmpty(list)}">
+                        <a th:href="@{/board/boardDetail(board_seq=${dto.board_seq})}" th:text="${dto.title}"></a>
+                        <span th:text="${#dates.format(dto.regdate, 'yyyy-MM-dd')}"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -16,6 +16,9 @@ public class BoardDto {
 	private Date regdate;
 	private String delflag;
 	
+	private String name;
+	private int memberid;
+	
 	//Join용 맴버필드
 	private List<FileBoardDto> fileBoardDto;
 	
@@ -24,8 +27,8 @@ public class BoardDto {
 		// TODO Auto-generated constructor stub
 	}
 
-	public BoardDto(int board_seq, String id, String title, String content, Date regdate, String delflag,
-			List<FileBoardDto> fileBoardDto) {
+	public BoardDto(int board_seq, String id, String title, String content, Date regdate, String delflag, String name,
+			int memberid, List<FileBoardDto> fileBoardDto) {
 		super();
 		this.board_seq = board_seq;
 		this.id = id;
@@ -33,6 +36,8 @@ public class BoardDto {
 		this.content = content;
 		this.regdate = regdate;
 		this.delflag = delflag;
+		this.name = name;
+		this.memberid = memberid;
 		this.fileBoardDto = fileBoardDto;
 	}
 
@@ -84,6 +89,22 @@ public class BoardDto {
 		this.delflag = delflag;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getMemberid() {
+		return memberid;
+	}
+
+	public void setMemberid(int memberid) {
+		this.memberid = memberid;
+	}
+
 	public List<FileBoardDto> getFileBoardDto() {
 		return fileBoardDto;
 	}
@@ -95,9 +116,8 @@ public class BoardDto {
 	@Override
 	public String toString() {
 		return "BoardDto [board_seq=" + board_seq + ", id=" + id + ", title=" + title + ", content=" + content
-				+ ", regdate=" + regdate + ", delflag=" + delflag + ", fileBoardDto=" + fileBoardDto + "]";
+				+ ", regdate=" + regdate + ", delflag=" + delflag + ", name=" + name + ", memberid=" + memberid
+				+ ", fileBoardDto=" + fileBoardDto + "]";
 	}
-	
-	
-	
+
 }

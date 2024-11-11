@@ -24,6 +24,10 @@ public interface BoardMapper {
 	public boolean updateBoard(BoardDto dto);
 	//글 삭제
 	public boolean mulDel(String[] seqs);
+
+	public boolean deleteBoard(int board_seq);
+
+	public List<BoardDto> searchBoard(String searchInput);
 	
 }
 

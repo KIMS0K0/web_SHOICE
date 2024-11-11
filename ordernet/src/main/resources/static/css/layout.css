@@ -9,16 +9,15 @@
 /* footer요소가 항상 바닥에 위치하면서 페이지 내부가 길어지면 아래로 밀리면서 계속 하단에 위치 */
 
 #container {
-   width: 1000px;
+padding : 0;
+   width: 83%;
+   min-width: 600px;
    margin: 0 auto;
-   min-height: calc(90vh - 50px); /* 50px은 푸터 높이 */
-   
+   min-height: calc(90vh - 150px); /* 50px은 푸터 높이 */
 }
 
 #footer{
 	text-align: center;
-	color:white;
-	background-color: #3c3c3c;
 	line-height: 50px;
 	height: 50px;
 }

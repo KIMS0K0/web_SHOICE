@@ -16,7 +16,13 @@ public class SearchService {
         return searchMapper.getUserList(search_input);
     }
     
+	public List<MemberDto> getUserListByName(String search_input) {
+		return searchMapper.getUserListByName(search_input);
+	}
+	
     public MemberDto getUserwithProfile(String id) {
         return searchMapper.getUserwithProfile(id);
     }
+
+
 }

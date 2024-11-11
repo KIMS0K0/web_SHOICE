@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+<meta charset="UTF-8">
+<title>즐겨찾기 리스트</title>
+<style type="text/css">
+    /* 제목 스타일 */
+    h1 {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* 테이블 스타일 */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1em;
+    }
+
+    .table th, .table td {
+        padding: 12px;
+        border-bottom: 1px solid #eaeaea;
+        text-align: left;
+        color: #333;
+    }
+
+    .table th {
+        font-weight: bold;
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .table tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .table td a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .table td a:hover {
+        color: #007bff;
+    }
+
+    /* 체크박스 스타일 */
+    input[type="checkbox"] {
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    /* 결과 없음 텍스트 스타일 */
+    .no-results {
+        text-align: center;
+        color: grey;
+        font-size: 1em;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div id="container">
+        <table class="table">
+            <tr>
+                <th>작성자</th>
+                <th>제목</th>
+                <th>작성일</th>
+            </tr>
+            <th:block th:if="${#lists.isEmpty(list)}">
+                <tr>
+                    <td colspan="3" class="no-results">--- 즐겨찾기한 글이 없습니다. ---</td>
+                </tr>
+            </th:block>
+            <th:block th:unless="${#lists.isEmpty(list)}">
+                <tr th:each="dto : ${list}">
+                    <td>
+                        <a th:href="@{|/user/yourPage?yourid=${dto.memberid}|}" th:text="${dto.name}"></a>
+                    </td>
+                    <td>
+                        <a th:href="@{/board/boardDetail(board_seq=${dto.board_seq})}" th:text="${dto.title}"></a>
+                    </td>
+                    <td th:text="${#dates.format(dto.regdate,'yyyy-MM-dd')}"></td>
+                </tr>
+            </th:block>
+        </table>
+    </div>
+</div>
+</body>
+</html>

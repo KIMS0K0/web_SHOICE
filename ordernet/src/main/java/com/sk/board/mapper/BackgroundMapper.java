@@ -9,4 +9,5 @@ public interface BackgroundMapper {
 	
 	public void insertBackground(String id);
 	public BackgroundDto getBackground(String id);
+	public void updateBackground(BackgroundDto bdto);
 }

@@ -3,187 +3,462 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <meta charset="UTF-8">
 <title>상세보기</title>
-<script type="text/javascript">
-	function updateEX(){
-		if(confirm("수정하시겠습니까?")){
-			return true;
-		}
-		return false;
-	}
-</script>
+<script src="/js/bootstrap.menu.js?v=7"></script>
+
 <style type="text/css">
-    /* 스타일 정의 */
-    #title {
-        text-align: center;
-        font-size: 2em;
-        font-weight: bold;
-        margin: 20px 0;
-    }
-    #author {
-        text-align: center;
-        margin: 20px 0;
-    }
-    #author .profile {
-        display: inline-block;
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        border: 2px solid #ddd;
-        overflow: hidden;
-        margin-bottom: 10px;
-    }
-    #author img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    #author .name {
-        font-size: 1em;
-        color: #888;
-    }
-    #divider {
-        width: 80%;
-        margin: 20px auto;
-        border-bottom: 1px solid #ddd;
-    }
-    #content {
-        width: 80%;
-        margin: 30px auto;
-        font-size: 1.2em;
-        line-height: 1.6;
-    }
-    #comments {
-        width: 80%;
-        margin: 40px auto;
-    }
-    #comments input[type="text"] {
-        width: calc(100% - 100px);
-        padding: 10px;
-        margin-right: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-    #comments button {
-        padding: 10px 20px;
-        border: none;
-        background-color: #007bff;
-        color: #fff;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    #comments button:hover {
-        background-color: #0056b3;
-    }
-    /* 댓글 스타일 정의 */
-    .comment {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .comment .profile {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        overflow: hidden;
-        margin-right: 20px;
-    }
-    .comment img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .comment-content {
-        flex: 1;
-    }
-    .comment-author {
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    .comment-text {
-        margin-bottom: 5px;
-    }
-    .comment-actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .comment-actions button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: #007bff;
-        padding: 5px 10px;
-    }
-    .comment-actions button:hover {
-        color: #0056b3;
-    }
-    .comment-actions .more-button {
-        font-size: 1.5em;
-        color: #888;
-    }
+/* 제목 스타일 */
+#title {
+	margin: 20px;
+	margin-top:0px;
+    text-align: center;
+    font-size: 1.8em;
+}
+
+/* 작성자 정보 */
+#author {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+#author .profile {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border: 2px solid #ddd;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#author .name {
+    font-size: 1.2em;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+}
+
+.bookmark-btn, .comment-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 1em;
+    text-decoration: none;
+}
+.bookmark-btn i, .comment-btn i {
+    font-size: 1.0em;
+    margin-right: 6px;
+    margin-bottom: 1px;
+}
+.bookmark-btn:hover, .comment-btn:hover {
+    text-decoration: none; /* 호버 상태에서도 밑줄 없음 */
+}
+.bookmark-btn span, .comment-btn span {
+    color: #777; /* 더 연한 회색 */
+    font-weight: 400;
+    font-size: 1em;
+}
+
+.fa-solid.fa-chevron-up, .fa-solid.fa-chevron-down {
+	font-size: 0.8em;
+	margin-left: 9px;
+	margin-right: 0px;
+}
+/* 구분선 */
+#divider {
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+/* 본문 내용 스타일 */
+#content {
+    width: 100%;
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
+    margin-top: 20px;
+    margin-bottom: 60px;
+}
+
+/* 댓글 입력 */
+#postComment {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+
+
+
+#postComment form {
+    display: flex;
+    width: 100%;
+}
+
+#postComment input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#postComment button {
+    padding: 10px 20px;
+    font-size: 0.8em;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* 댓글 목록 */
+#comments-section {
+	margin-top: 18px;
+    display: none; /* 기본적으로 숨김 */
+}
+
+.comment .profile {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 5px;
+    border: 1px solid rgba(221, 221, 221, 0.5);
+}
+
+.comment .profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.comment-author {
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.comment-content {
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.comment-date {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.replyList {
+    border-bottom: 1px solid #ddd;
+}
+
+.reply {
+    background-color: #f9fcff; /* 아주 연한 하늘색 배경 */
+    padding: 10px; /* 내부 여백 추가 */
+    border-top: 1px solid #ddd; /* 위쪽 얇은 회색 선 */
+}
+
+.reply-header {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 아이콘과 이미지, 이름 간격 */
+    margin-bottom: 5px;
+}
+
+.reply .comment-details1 {
+	margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 프로필과 이름 간격 */
+}
+
+.reply .comment-details2 {
+	padding-left: 30px;
+}
+
+.reply .comment-author {
+    font-weight: bold;
+    color: #333;
+}
+
+.reply i {
+	margin-right: 4px;
+	color: rgba(221, 221, 221, 0.7);
+	font-size: 1.0em;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.back-button {
+    font-size: 1.5em;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-button {
+    font-size: 1.5em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.dropdown-menu button {
+    background: none;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+    background-color: #f0f0f0;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    position: relative; /* 부모 요소에 상대 위치 설정 */
+}
+
+.menu-button {
+    font-size: 1.5em; /* 점 세 개 버튼 크기 */
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none; /* 기본적으로 숨김 */
+    top: 100%; /* 버튼 아래에 나타나도록 설정 */
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+.dropdown-menu button {
+    display: block;
+    padding: 8px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.file-box {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.file-link {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #f9f9f9; /* 박스 배경색 */
+    color: #696969; /* 텍스트 색상 */
+    text-decoration: none; /* 밑줄 제거 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9em;
+    width: 300px; /* 박스 너비 고정 */
+    text-align: center;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    text-overflow: ellipsis; /* 말줄임표(...) */
+}
+
+.file-link i {
+    margin-right: 8px; /* 아이콘과 텍스트 사이 간격 */
+    color: #696969; /* 아이콘 색상 */
+}
+
+.file-link:hover {
+    background-color: #e0e0e0; /* 호버 시 박스 배경색 */
+    color: #696969; /* 텍스트 색상 유지 */
+    text-decoration: none; /* 호버 시에도 밑줄 제거 */
+}
+
+
+
+
 </style>
 </head>
 <body>
 <div layout:fragment="content">
 <div id="container">
+    <!-- 수정/삭제/목록 버튼 -->
+    <form action="/board/boardUpdate" method="post" onsubmit="return updateEX()" th:object="${updateBoardCommand}">
+        <div class="button-group">
+		    <button type="button" class="btn back-button" th:onclick="|location.href='@{/board/boardList}'|">〈</button>
+		    <button type="button" class="menu-button" onclick="toggleMenu()">⋮</button>
+		    <div class="dropdown-menu pull-right" id="dropdownMenu">
+		        <button type="button" th:onclick="|share()|">공유하기</button>
+                <button type="button" th:if="${session.mdto != null && (session.mdto.id == dto.id)}" th:onclick="|update(${dto.board_seq})|">수정하기</button>
+                <button type="button" th:if="${session.mdto != null && (session.mdto.id == dto.id)}" th:onclick="|remove(${dto.board_seq})|">삭제하기</button>
+		    </div>
+	    </div>
+    </form>
+    
     <!-- 제목 -->
     <div id="title" th:text="${dto.title}"></div>
 
     <!-- 작성자 정보 -->
     <div id="author">
-        <div class="profile">
-            <img th:src="@{|/upload/${bdto.profileDto.stored_name}|}" alt="Profile Photo">
+    <a th:href="@{/user/yourPage(yourid=${dto.memberid})}">
+    <div class="profile">
+        <img th:src="@{|/upload/${bdto.profileDto.stored_name}|}" alt="Profile Photo">
         </div>
         <div class="name" th:text="${bdto.name}"></div>
+        </a>
     </div>
 
     <!-- 구분선 -->
     <div id="divider"></div>
 
+<div th:each="fdto : ${dto.fileBoardDto}" class="file-box" th:if="${fdto.file_seq != 0}">
+    <a th:href="@{/board/download(file_seq=${fdto.file_seq})}" class="file-link">
+        <i class="fa-solid fa-paperclip"></i>
+        <span th:text="${fdto.origin_name}"></span>
+    </a>
+</div>
+
+	
+	
     <!-- 내용 -->
     <div id="content" th:text="${dto.content}" style="white-space: pre-wrap;">이곳에 줄글 내용이 들어갑니다.</div>
 
+	<a th:if="${session.mdto != null && (bookmark == 1)}" th:href="@{/bookmark/bookmarkDelete(board_seq=${dto.board_seq})}" 
+		class="bookmark-btn"><i class="fa-solid fa-heart" style="color: #e65e72;"></i><span>공감</span></a>
+	<a th:if="${session.mdto != null && (bookmark == 0)}" th:href="@{/bookmark/bookmarkInsert(board_seq=${dto.board_seq})}" 
+		class="bookmark-btn"><i class="fa-regular fa-heart" style="color: #a9a9a9;"></i><span>공감</span></a>
+	<a class="comment-btn" onclick="toggleComments()">
+    <i class="fa-regular fa-comment-dots" style="color: #a9a9a9;"></i>
+    <span>댓글</span>
+    <i id="chevronIcon" class="fa-solid fa-chevron-down" style="color: #a9a9a9;"></i>
+</a>
+				
+
     <!-- 댓글 입력 -->
-    <div id="comments">
-        <form action="/board/addComment" method="post">
-            <input type="hidden" name="board_seq" th:value="${dto.board_seq}"/>
-            <input type="text" name="commentContent" placeholder="댓글을 입력하세요" required>
-            <button type="submit">댓글 등록</button>
-        </form>
-    </div>
-
-    <!-- 댓글 목록 -->
-<div id="comments-section" th:if="${comments != null && !comments.isEmpty()}">
-    <h3>댓글 목록</h3>
-    <div th:each="comment : ${comments}" class="comment">
-        <div class="profile">
-            <img th:src="@{|/upload/${comment.member.profileDto.stored_name}|}" alt="Profile Photo" th:if="${comment.member.profileDto != null}"/>
-        </div>
-        <div class="comment-content">
-            <p class="comment-author" th:text="${comment.member.name}">작성자 이름</p>
-            <p class="comment-text" th:text="${comment.content}">댓글 내용</p>
-            <p class="comment-date" th:text="${#dates.format(comment.regdate, 'yyyy-MM-dd HH:mm')}"></p>
-            <div class="comment-actions">
-                <button type="button" class="reply-button">답글</button>
-                <button type="button" class="more-button" th:if="${session.mdto != null && (session.mdto.id == dto.id || session.mdto.id == comment.id)}">⋮</button>
-            </div>
-        </div>
-    </div>
-</div>
+    
 
 
-    <!-- 수정/삭제/목록 버튼 -->
-    <form action="/board/boardUpdate" method="post" onsubmit="return updateEX()" th:object="${updateBoardCommand}">
-        <div class="button-group">
-            <th:block th:if="${session.mdto != null && session.mdto.id == dto.id}">
-                <button type="button" class="btn" th:onclick="|location.href='@{/board/boardUpdate(board_seq=${dto.board_seq})}'|">수정</button>
-                <button type="button" class="btn" th:onclick="|location.href='@{/board/mulDel(seq=${dto.board_seq})}'|">삭제</button>
-            </th:block>
-            <button type="button" class="btn" th:onclick="|location.href='@{/board/boardList}'|">목록</button>
-        </div>
-    </form>
+			<!-- 댓글 목록 -->
+			<div id="comments-section">
+				<div id="postComment">
+		        <form action="/comment/addComment" method="post">
+		            <input type="hidden" name="board_seq" th:value="${dto.board_seq}"/>
+		            <input type="text" name="commentContent" placeholder="댓글을 입력하세요" required>
+		            <button type="submit">댓글 등록</button>
+		        </form>
+		    </div>
+				<div th:each="comment : ${comments}" class="comment" th:if="${comments != null && !comments.isEmpty()}">
+					<div class="commentList">
+					<a th:href="@{/user/yourPage(yourid=${comment.member.memberId})}">
+						<div class="reply-header">
+							<img class="profile"
+								th:src="@{|/upload/${comment.member.profileDto.stored_name}|}"
+								alt="Profile Photo" th:if="${comment.member.profileDto != null}" />
+							<p class="comment-author" th:text="${comment.member.name}">작성자
+								이름</p>
+						</div>
+						</a>
+						<div class="comment-details2">
+							<div class="comment-content">
+								<p class="comment-text" th:text="${comment.content}">댓글 내용</p>
+								<p class="comment-date"
+									th:text="${#dates.format(comment.regdate, 'yyyy-MM-dd HH:mm')}"></p>
+								<div class="comment-actions">
+									<button type="button" class="reply-button"
+										th:if="${session.mdto != null}"
+										onclick="toggleReplyInput(this)">답글</button>
+									<button type="button" class="reply-button"
+										th:if="${session.mdto != null && (session.mdto.id == dto.id || session.mdto.id == comment.id)}"
+										th:onclick="|commentDelete(${comment.board_seq},${comment.comment_seq})|">삭제</button>
+								</div>
+								<!-- 답글 입력란 -->
+								<div class="reply-input" style="display: none;">
+									<form action="/comment/addReply" method="post">
+										<input type="hidden" name="comment_seq"
+											th:value="${comment.comment_seq}" /> <input type="hidden"
+											name="board_seq" th:value="${comment.board_seq}" /> <input
+											type="text" name="replyContent" placeholder="답글을 입력하세요"
+											required style="width: 80%; margin-top: 10px;">
+										<button type="submit">답글 제출</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="replyList">
+						<div th:each="reply : ${comment.replies}" class="reply"  th:if="${reply.reply_seq!=0}">
+						    <div class="reply-header">
+					            <i class="fa-solid fa-reply fa-rotate-180"></i> <!-- 회전된 'ㄴ' 모양 아이콘 -->
+					            <a th:href="@{/user/yourPage(yourid=${reply.member.memberId})}">
+					            <div class="comment-details1">
+					            
+					                <img class="profile"
+					                     th:src="@{|/upload/${reply.member.profileDto.stored_name}|}"
+					                     alt="답글 프로필" th:if="${reply.member.profileDto != null}" />
+					                <p class="comment-author" th:text="${reply.member.name}">작성자 이름</p>
+					                
+					            </div>
+					            </a>
+					        </div>
+							<div class="comment-details2">
+								<div class="comment-content">
+									<p class="comment-text" th:text="${reply.content}">댓글 내용</p>
+									<p class="comment-date"
+										th:text="${#dates.format(reply.regdate, 'yyyy-MM-dd HH:mm')}"></p>
+									<div class="comment-actions">
+										<button type="button" class="reply-button"
+											th:if="${session.mdto != null && (session.mdto.id == dto.id || reply.id == session.mdto.id)}"
+											th:onclick="|replyDelete(${comment.board_seq},${reply.reply_seq})|">삭제</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 </div>
 </div>
 </body>

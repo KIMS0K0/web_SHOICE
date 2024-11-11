@@ -4,7 +4,7 @@
 <mapper namespace="com.sk.board.mapper.SearchMapper">
 
 	<resultMap type="memberDto" id="memberDtoMap">
-        <id property="memberId" column="memberid"/> <!-- 대소문자 확인 -->
+        <id property="memberId" column="memberid"/>
         <result property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="email" column="email"/>
@@ -32,6 +32,18 @@
             profile P ON M.id = P.id
         WHERE 
             M.job LIKE CONCAT('%', #{search_input}, '%');
+    </select>
+    
+    <select id="getUserListByName" parameterType="String" resultMap="memberDtoMap">
+        SELECT 
+            M.memberid, M.id, M.name, M.email, M.address, M.role, M.job,
+            P.file_seq, P.origin_name, P.stored_name
+        FROM 
+            member M 
+        JOIN 
+            profile P ON M.id = P.id
+        WHERE 
+            M.name LIKE CONCAT('%', #{search_input}, '%');
     </select>
     
     <select id="getUserwithProfile" parameterType="String" resultMap="memberDtoMap">

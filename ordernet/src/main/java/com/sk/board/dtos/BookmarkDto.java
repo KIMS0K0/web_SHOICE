@@ -9,6 +9,15 @@ public class BookmarkDto {
 	private String id;
 	private int board_seq;
 	
+	public BookmarkDto() {
+		super();
+	}
+	public BookmarkDto(int bookmark_seq, String id, int board_seq) {
+		super();
+		this.bookmark_seq = bookmark_seq;
+		this.id = id;
+		this.board_seq = board_seq;
+	}
 	public int getBookmark_seq() {
 		return bookmark_seq;
 	}

@@ -18,10 +18,14 @@ public class CommentService {
 	}
 	
 	public void deleteComment(int comment_seq) {
-		
+		commentMapper.deleteComment(comment_seq);
 	}
 	
 	public List<CommentDto> getComments(int board_seq) {
 		return commentMapper.getComments(board_seq);
+	}
+
+	public void addReply(CommentDto commentDto) {
+		commentMapper.addReply(commentDto);
 	}
 }

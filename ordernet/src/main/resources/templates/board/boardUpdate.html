@@ -14,13 +14,14 @@
 	}
 </script>
 <style type="text/css">
-
+#container {
+    padding-top: 20px; 
+}
 </style>
 </head>
 <body>
 <div layout:fragment="content">
 <div id="container">
-<h1>상세보기</h1>
 <form action="/board/boardUpdate" method="post" onsubmit="return updateEX()"
 								th:object="${updateBoardCommand}">
 	<input type="hidden" name="board_seq"  th:value="${dto.board_seq}"/>

@@ -96,6 +96,14 @@ public class BoardService {
 	public boolean mulDel(String[] seqs) {
 		return boardMapper.mulDel(seqs);
 	}
+
+	public boolean deleteBoard(int board_seq) {
+		return boardMapper.deleteBoard(board_seq);
+	}
+
+	public List<BoardDto> searchBoard(String searchInput) {
+		return boardMapper.searchBoard(searchInput);
+	}
 }
 
 

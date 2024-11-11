@@ -13,7 +13,7 @@ public interface MemberMapper {
 	
 	public MemberDto loginUser(String id);
 	
-	public int updateUser(MemberDto dto);
+	public boolean updateUser(MemberDto dto);
 
 	public MemberDto getUser(int memberid);
 

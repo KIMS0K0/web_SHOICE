@@ -5,6 +5,7 @@
 	
 	<resultMap type="boardDto" id="boardDtoMap">
 		<id property="board_seq"   column="BOARD_SEQ" />
+		<result property="memberid"      column="memberID" />
 		<result property="id"      column="ID" />
 		<result property="title"   column="TITLE" />
 		<result property="content" column="CONTENT" />
@@ -21,21 +22,32 @@
 	
 	
 	<select id="getAllList" resultType="boardDto">
-		SELECT BOARD_SEQ, ID, TITLE, CONTENT, REGDATE
-		FROM board
-		ORDER BY REGDATE DESC
+	    SELECT b.BOARD_SEQ, b.ID, b.TITLE, b.CONTENT, b.REGDATE, m.NAME, m.memberid
+	    FROM board b
+	    JOIN member m ON b.ID = m.ID
+	    ORDER BY b.REGDATE DESC
 	</select>
+
 	<select id="getMyList" resultType="boardDto">
 		SELECT BOARD_SEQ, ID, TITLE, CONTENT, REGDATE
 		FROM board
 		WHERE ID = #{id};
 	</select>
 	
+	<select id="searchBoard" parameterType="String" resultType="boardDto">
+    	SELECT b.BOARD_SEQ, b.ID, b.TITLE, b.CONTENT, b.REGDATE, m.NAME, m.memberid
+	    FROM board b
+	    JOIN member m ON b.ID = m.ID
+	    WHERE B.title LIKE CONCAT('%', #{searchInput}, '%')
+	    ORDER BY b.REGDATE DESC
+    </select>
+    
 	<select id="getBoard" parameterType="Integer" resultMap="boardDtoMap">
 		SELECT B.BOARD_SEQ, B.ID, B.TITLE, B.CONTENT, B.REGDATE
-      	,F.FILE_SEQ, F.ORIGIN_NAME, F.STORED_NAME
-		FROM board B LEFT OUTER JOIN FILEINFO F
+      	,F.FILE_SEQ, F.ORIGIN_NAME, F.STORED_NAME, m.memberid
+		FROM board B LEFT OUTER JOIN fileinfo F
 		ON B.BOARD_SEQ = F.BOARD_SEQ
+		JOIN member m ON m.id = b.id
 		WHERE B.BOARD_SEQ = #{board_seq}
 	</select>
 	
@@ -44,7 +56,7 @@
 	<insert id="insertBoard" parameterType="boardDto"
 		useGeneratedKeys="true" keyProperty="board_seq">
 		INSERT INTO board
-		VALUES(NULL,#{id},#{title},#{content},sysdate())
+		VALUES(NULL,#{id},#{title},#{content},NOW())
 	</insert>
 	
 	<update id="updateBoard" parameterType="boardDto">
@@ -60,6 +72,11 @@
 			#{board_seq}
 		</foreach>
 	</update>
+	
+	<delete id="deleteBoard" parameterType="int">
+		DELETE FROM BOARD
+		WHERE BOARD_SEQ=#{board_seq}
+	</delete>
 </mapper>
 
 

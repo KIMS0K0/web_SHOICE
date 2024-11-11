@@ -1,6 +1,7 @@
 package com.sk.board.dtos;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
@@ -13,13 +14,14 @@ public class CommentDto {
 	private Date regdate;
 	
 	private MemberDto member;
+	private List<ReplyDto> replies; 
 	
 	public CommentDto() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public CommentDto(int comment_seq, int board_seq, String id, String content, Date regdate, MemberDto member) {
+	public CommentDto(int comment_seq, int board_seq, String id, String content, Date regdate, MemberDto member,
+			List<ReplyDto> replies) {
 		super();
 		this.comment_seq = comment_seq;
 		this.board_seq = board_seq;
@@ -27,6 +29,7 @@ public class CommentDto {
 		this.content = content;
 		this.regdate = regdate;
 		this.member = member;
+		this.replies = replies;
 	}
 
 	public int getComment_seq() {
@@ -77,10 +80,17 @@ public class CommentDto {
 		this.member = member;
 	}
 
+	public List<ReplyDto> getReplies() {
+		return replies;
+	}
+
+	public void setReplies(List<ReplyDto> replies) {
+		this.replies = replies;
+	}
+
 	@Override
 	public String toString() {
 		return "CommentDto [comment_seq=" + comment_seq + ", board_seq=" + board_seq + ", id=" + id + ", content="
-				+ content + ", regdate=" + regdate + ", member=" + member + "]";
+				+ content + ", regdate=" + regdate + ", member=" + member + ", replies=" + replies + "]";
 	}
-
 }

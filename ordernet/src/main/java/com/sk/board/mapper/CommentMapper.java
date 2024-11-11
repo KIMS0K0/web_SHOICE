@@ -11,4 +11,5 @@ public interface CommentMapper {
 	public void addComment(CommentDto commentDto);
 	public void deleteComment(int comment_seq);
 	public List<CommentDto> getComments(int board_seq);
+	public void addReply(CommentDto commentDto);
 }

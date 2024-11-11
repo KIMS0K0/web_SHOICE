@@ -1,77 +1,194 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{layouts/layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 <head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>게시판 목록</title>
 <script type="text/javascript">
-	function allSel(bool){
-		var chks=document.getElementsByName("seq");// [seq,seq,seq,seq..]
-		for (var i = 0; i < chks.length; i++) {
-			chks[i].checked=bool;//각각의 체크박스에 체크여부를 true/false로 적용
-		}
-	}
-	
-	function isCheck(){
-		if(confirm("정말 삭제 하시겠습니까?")){
-			return true;
-		}
-		return false;
-	}
+    function allSel(bool){
+        var chks=document.getElementsByName("seq");
+        for (var i = 0; i < chks.length; i++) {
+            chks[i].checked=bool;
+        }
+    }
+
+    function isCheck(){
+        return confirm("정말 삭제 하시겠습니까?");
+    }
 </script>
 <style type="text/css">
+#container {
+    padding-top: 20px; 
+}
+    .post-label {
+        font-weight: bold;
+        color: #666;
+        font-size: 1.0em;
+        margin-right: 5px;
+    }
 
+    .post-count {
+        color: #666;
+        font-size: 0.95em;
+    }
+
+    .divider {
+        border: none;
+        border-top: 1px solid #ffffff; /* 원하는 색상 */
+        margin: 5px 0;
+    }
+	
+    /* 검색 폼 스타일 */
+    form[action="/board/boardSearch"] {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    form[action="/board/boardSearch"] input[type="text"] {
+        flex: 1;
+        padding: 8px;
+        font-size: 1em;
+        border: 1px solid #ddd;
+    }
+
+    form[action="/board/boardSearch"] button {
+        padding: 8px 12px;
+        font-size: 1em;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* 테이블 스타일 */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1em;
+    }
+
+    .table th, .table td {
+        padding: 12px;
+        border-bottom: 1px solid #eaeaea;
+        text-align: left;
+        color: #333;
+    }
+
+    .table th {
+        font-weight: bold;
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .table tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .table td a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .table td a:hover {
+        color: #007bff;
+    }
+
+    /* 체크박스 스타일 */
+    input[type="checkbox"] {
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    /* 에러 메시지 스타일 */
+    .errorField {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 5px;
+        display: inline-block;
+    }
+    
+    .write-btn {
+        font-size: 0.8em;
+        color: black;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        float: right;
+        margin-bottom: 10px;
+    }
+
+    .write-btn i {
+        margin-right: 5px;
+    }
+
+    .post-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 </style>
 </head>
 <body>
 <div layout:fragment="content">
-<div id="container">
-<h1>게시판 목록</h1>
-<form action="/board/mulDel" method="post" th:object="${delBoardCommand}">
-	<table class="table">
-		<tr>
-			<th><input type="checkbox" name="all" 
-										onclick="allSel(this.checked)" /></th>
-			<th>작성자</th>
-			<th>제목</th>
-			<th>작성일</th>
-		</tr>
-		<th:block th:if="${#lists.isEmpty(list)}">
-			<tr>
-				<td colspan="4" style="text-align: center;" >---작성된 글이 없습니다.---</td>
-			</tr> 
-		</th:block>
-		<th:block th:unless="${#lists.isEmpty(list)}">
-			<tr th:each="dto:${list}">
-				<td><input type="checkbox" name="seq" th:field="*{seq}"
-										   th:value="${dto.board_seq}"/></td>
-				<td th:text="${dto.id}"></td>
-				<td>
-					<a th:href="@{/board/boardDetail(board_seq=${dto.board_seq})}"
-					   th:text="${dto.title}"></a>
-				</td>
-				<td th:text="${#dates.format(dto.regdate,'yyyy-MM-dd')}"></td>
-			</tr>
-		</th:block>
-		<tr>
-			<td colspan="4">
-				<button type="button" class="btn"
-				 th:onclick="|location.href='@{/board/boardInsert}'|">글추가</button>
-				<button type="submit" class="btn">삭제</button>
-				<span th:if="${#fields.hasErrors('seq')}"
-				      th:errors="*{seq}"></span>
-			</td>
-		</tr>
-	</table>
-</form>
-</div>
+    <div id="container">
+        <div class="post-info">
+            <div>
+                <span class="post-label">게시글</span>
+                <span class="post-count" th:text="${length} + '개의 글'">0</span>
+            </div>
+            <a href="/board/boardInsert" class="write-btn">
+                <i class="fa-regular fa-pen-to-square"></i> 글쓰기
+            </a>
+        </div>
+
+        <form action="/board/boardSearch" method="get">
+            <input type="text" name="search_input" placeholder="제목을 입력하세요." th:value="${search_input}">
+            <button type="submit">검색</button>
+        </form>
+        
+        <form action="/board/mulDel" method="post" th:object="${delBoardCommand}">
+            <table class="table">
+                <tr th:if="${session.mdto != null && session.mdto.role == 'ADMIN'}">
+                    <td colspan="4">
+                        <button th:if="${session.mdto != null && session.mdto.role == 'ADMIN'}" type="submit" class="btn">삭제</button>
+                        <span th:if="${#fields.hasErrors('seq')}" th:errors="*{seq}" class="errorField"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th th:if="${session.mdto != null && session.mdto.role == 'ADMIN'}">
+                        <input type="checkbox" name="all" onclick="allSel(this.checked)">
+                    </th>
+                    <th>작성자</th>
+                    <th>제목</th>
+                    <th>작성일</th>
+                </tr>
+                <th:block th:if="${#lists.isEmpty(list)}">
+                    <tr>
+                        <td colspan="4" style="text-align: center;">--- 작성된 글이 없습니다. ---</td>
+                    </tr>
+                </th:block>
+                <th:block th:unless="${#lists.isEmpty(list)}">
+                    <tr th:each="dto:${list}">
+                        <td th:if="${session.mdto != null && session.mdto.role == 'ADMIN'}">
+                            <input type="checkbox" name="seq" th:field="*{seq}" th:value="${dto.board_seq}">
+                        </td>
+                        <td>
+                            <a th:href="@{|/user/yourPage?yourid=${dto.memberid}|}" th:text="${dto.name}"></a>
+                        </td>
+                        <td>
+                            <a th:href="@{/board/boardDetail(board_seq=${dto.board_seq})}" th:text="${dto.title}"></a>
+                        </td>
+                        <td th:text="${#dates.format(dto.regdate,'yyyy-MM-dd')}"></td>
+                    </tr>
+                </th:block>
+            </table>
+        </form>
+    </div>
 </div>
 </body>
 </html>
-
-
-
-
-
-

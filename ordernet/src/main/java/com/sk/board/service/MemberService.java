@@ -105,6 +105,10 @@ public class MemberService {
 		return memberMapper.getMemberId(id);
 	}
 
+	public boolean updateUser(MemberDto mdto) {
+		return memberMapper.updateUser(mdto);
+	}
+
 }
 
 

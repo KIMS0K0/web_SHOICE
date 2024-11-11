@@ -5,94 +5,148 @@
 <head>
 <meta charset="UTF-8">
 <style type="text/css">
-.profile-image img {
-    width: 50px; /* 원하는 너비로 설정 */
-    height: 50px; /* 원하는 높이로 설정 */
-    border-radius: 50%; /* 동그란 모양으로 만들기 */
+#container {
+    padding-top: 20px; 
 }
-.results-container {
-    margin-top: 20px; /* 결과 간격 조정 */
-}
+    h1 {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
 
-.result-card {
-    display: flex;
-    align-items: center; /* 수직 정렬 */
-    margin-bottom: 20px; /* 카드 간격 */
-}
+    /* 검색 폼 스타일 */
+    form[action="/search/findJob"] {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-.result-card-link {
-    text-decoration: none; /* 밑줄 제거 */
-    display: block; /* 전체 카드 영역 클릭 가능하도록 설정 */
-    color: inherit; /* 텍스트 색상 유지 */
-}
+    form[action="/search/findJob"] select,
+    form[action="/search/findJob"] input[type="text"],
+    form[action="/search/findJob"] button {
+        height: 40px;
+        font-size: 1em;
+        border: 1px solid #ddd;
+    }
 
-.result-card-link:hover {
-	background-color: rgba(0, 0, 0, 0.05);
-    text-decoration: none; /* 호버 상태에서도 밑줄 제거 */
-    color: inherit; /* 호버 상태에서도 부모 요소의 색상 유지 */
-}
+    form[action="/search/findJob"] select {
+        margin-right: 10px;
+        padding: 0 10px;
+    }
 
-.profile-image {
-    margin-right: 15px; /* 이미지와 텍스트 간격 */
-}
+    form[action="/search/findJob"] input[type="text"] {
+        flex: 1;
+        padding: 0 10px;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+    }
 
-.profile-image img {
-    width: 50px; /* 프로필 사진 너비 */
-    height: 50px; /* 프로필 사진 높이 */
-    border-radius: 50%; /* 동그란 이미지 */
-}
+    form[action="/search/findJob"] button {
+        padding: 0 15px;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        cursor: pointer;
+    }
 
-.name {
-    margin: 0; /* 기본 마진 제거 */
-    font-weight: bold; /* 이름 강조 */
-}
+    /* 검색 결과 카드 스타일 */
+    .results-container {
+        margin-top: 20px;
+    }
 
-.job {
-    margin: 0; /* 기본 마진 제거 */
-    color: grey; /* 직업 색상 */
-}
+    .result-card-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+
+    .result-card-link:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+
+    .result-card {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #eaeaea;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-image {
+        margin-right: 15px;
+    }
+
+    .profile-image img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid #ddd;
+        object-fit: cover;
+    }
+
+    .name {
+        margin: 0;
+        font-weight: bold;
+        color: #333;
+        font-size: 1.1em;
+    }
+
+    .job {
+        margin: 0;
+        color: grey;
+        font-size: 0.9em;
+    }
+
+    /* 검색 결과가 없을 때 */
+    .no-results {
+        text-align: center;
+        color: grey;
+        font-size: 1em;
+        margin-top: 20px;
+    }
 
 </style>
 </head>
 <body>
 <div layout:fragment="content">
 <div id="container">
-<h1>사람 찾기</h1>
-
-<!-- 검색 폼 -->
-<form action="/search/findJob" method="get" style="display: flex; align-items: center;">
-    <div class="dropdown">
-        <select name="searchType" style="height: 35px; margin-right: 10px;">
-            <option value="name" th:selected="${param.searchType == 'name'}">이름</option>
-            <option value="job" th:selected="${param.searchType == 'job'}">직업</option>
+    <!-- 검색 폼 -->
+    <form action="/search/findJob" method="get">
+        <select name="searchType" required>
+            <option value="name" th:selected="${searchType == 'name'}">이름</option>
+            <option value="job" th:selected="${searchType == 'job'}">직업</option>
         </select>
-    </div>
-    <input type="text" name="search_input" placeholder="search" th:value="${param.search_input}" style="height: 35px;"/>
-    <button type="submit" style="height: 35px;">검색</button>
-</form>
+        <input type="text" name="search_input" placeholder="search" th:value="${search_input}" />
+        <button type="submit">검색</button>
+    </form>
 
-<!-- 검색 결과 표시 -->
-		<div class="results-container">
-            <!-- 검색 결과가 있을 때만 반복 출력 -->
-            <a th:href="@{/user/yourPage(yourid=${member.memberId})}" th:each="member : ${list}" class="result-card-link">
-			    <div class="result-card">
-			        <div class="profile-image">
-			            <img th:src="@{|/upload/${member.profileDto.stored_name}|}" alt="프로필 사진" style="width: 50px; height: 50px;"/>
-			        </div>
-			        <div class="result-info">
-			            <p class="name" th:text="${member.name}">작성자 이름</p>
-			            <p class="job" th:text="${member.job}">직업</p>
-			        </div>
-			    </div>
-			</a>
-
-            <!-- 검색 결과가 없을 때 빈 행을 표시 -->
-            <div th:if="${list == null || list.isEmpty()}" class="no-results">
-                검색 결과가 없습니다.
+    <!-- 검색 결과 표시 -->
+    <div class="results-container">
+        <!-- 검색 결과가 있을 때만 반복 출력 -->
+        <a th:href="@{/user/yourPage(yourid=${member.memberId})}" th:each="member : ${list}" class="result-card-link">
+            <div class="result-card">
+                <div class="profile-image">
+                    <img th:src="@{|/upload/${member.profileDto.stored_name}|}" alt="프로필 사진" />
+                </div>
+                <div class="result-info">
+                    <p class="name" th:text="${member.name}">작성자 이름</p>
+                    <p class="job" th:text="${member.job}">직업</p>
+                </div>
             </div>
+        </a>
+
+        <!-- 검색 결과가 없을 때 빈 행을 표시 -->
+        <div th:if="${list == null || list.isEmpty()}" class="no-results">
+            검색 결과가 없습니다.
         </div>
-
-
+    </div>
 </div>
 </div>
 </body>

@@ -11,4 +11,5 @@ public interface ProfileMapper {
 
 	public void insertProfile(String id);
 	public ProfileDto getProfile(String id);
+	public void updateProfile(ProfileDto profileDto);
 }

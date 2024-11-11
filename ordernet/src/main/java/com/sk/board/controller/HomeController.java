@@ -10,11 +10,12 @@ public class HomeController {
 
 	Logger logger=LoggerFactory.getLogger(getClass());
 	
-	@GetMapping(value = "/")
+	@GetMapping(value = {"/", "/home"})
 	public String home() {
 		logger.info("HOME페이지이동");
 		return "home";
 	}
+	
 }
 
 

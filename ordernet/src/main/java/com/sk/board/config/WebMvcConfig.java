@@ -34,6 +34,7 @@ public class WebMvcConfig implements WebMvcConfigurer{
 		System.out.println("user.dir:"+System.getProperty("user.dir"));
 		registry.addResourceHandler("/upload/**")
 				.addResourceLocations("file:"+System.getProperty("user.dir")+"/src/main/webapp/upload/");
+		registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/").setCachePeriod(60 * 60 * 24 * 365); 
 	}
 }
 

@@ -1,72 +1,91 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{layouts/layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
-<script type="text/javascript">
-
-</script>
+<title>새글 작성하기</title>
 <style type="text/css">
-
+#container {
+    padding-top: 20px; 
+}
+    .form-group label {
+        font-weight: bold;
+        color: #666;
+    }
+    .form-control {
+        border-radius: 5px;
+    }
+    .btn-submit {
+        background-color: #007bff;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+    }
+    .btn-submit:hover {
+        background-color: #0056b3;
+    }
+    .btn-cancel {
+        background-color: #6c757d;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+    }
+    .btn-cancel:hover {
+        background-color: #5a6268;
+    }
+    .error-message {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
 </style>
 </head>
 <body>
 <div layout:fragment="content">
-<div id="container">
-<h1>새글 작성하기</h1>
-<form action="/board/boardInsert" method="post"
-	  enctype="multipart/form-data" th:object="${insertBoardCommand}">
-	<input type="hidden" name="id" th:value="${session.mdto.id}"/>
-	<table class="table">
-		<tr>
-			<th>작성자[ID]</th>
-			<td th:text="${session.mdto.id}"></td>
-		</tr>
-		<tr>
-			<th>제목</th>
-			<td>
-				<input type="text" name="title" th:field="*{title}" 
-												class="form-control"/>
-				<span th:if="${#fields.hasErrors('title')}" 
-					  th:errors="*{title}"></span>
-			</td>
-		</tr>
-		<tr>
-			<th>파일</th>
-			<td>
-				<input type="file" name="filename" multiple="multiple"
-					                              class="form-control" />
-			</td>
-		</tr>
-		<tr>
-			<th>내용</th>
-			<td>
-				<textarea rows="10" cols="60" name="content"
-				          th:field="*{content}" class="form-control"></textarea>
-				<span th:if="${#fields.hasErrors('content')}" 
-					  th:errors="*{content}"></span>
-					  
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<button type="submit" class="btn">등록</button>
-				<button type="button" class="btn"
-				 th:onclick="|location.href='@{/board/boardList}'|">목록</button>
-			</td>
-		</tr>
-	</table>
-</form>
-</div>
+    <div id="container">
+        <form action="/board/boardInsert" method="post"
+              enctype="multipart/form-data" th:object="${insertBoardCommand}">
+            <input type="hidden" name="id" th:value="${session.mdto.id}"/>
+
+            <div class="form-group">
+                <label>작성자 [ID]</label>
+                <p class="form-control-plaintext" th:text="${session.mdto.id}"></p>
+            </div>
+
+            <div class="form-group">
+                <label for="title">제목</label>
+                <input type="text" name="title" th:field="*{title}" 
+                       class="form-control" id="title"/>
+                <span th:if="${#fields.hasErrors('title')}" 
+                      th:errors="*{title}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="filename">파일</label>
+                <input type="file" name="filename" multiple="multiple"
+                       class="form-control" id="filename"/>
+            </div>
+
+            <div class="form-group">
+                <label for="content">내용</label>
+                <textarea rows="10" name="content"
+                          th:field="*{content}" class="form-control" id="content"></textarea>
+                <span th:if="${#fields.hasErrors('content')}" 
+                      th:errors="*{content}" class="error-message"></span>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-submit">등록</button>
+                <button type="button" class="btn btn-cancel"
+                        th:onclick="|location.href='@{/board/boardList}'|">목록</button>
+            </div>
+        </form>
+    </div>
 </div>
 </body>
 </html>
-
-
-
-
-
-
-

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +22,12 @@ import com.sk.board.command.DelBoardCommand;
 import com.sk.board.command.InsertBoardCommand;
 import com.sk.board.command.UpdateBoardCommand;
 import com.sk.board.dtos.BoardDto;
+import com.sk.board.dtos.BookmarkDto;
 import com.sk.board.dtos.CommentDto;
 import com.sk.board.dtos.FileBoardDto;
 import com.sk.board.dtos.MemberDto;
 import com.sk.board.service.BoardService;
+import com.sk.board.service.BookmarkService;
 import com.sk.board.service.CommentService;
 import com.sk.board.service.FileService;
 import com.sk.board.service.MemberService;
@@ -48,14 +51,37 @@ public class BoardController {
 	private MemberService memberService;
 	@Autowired
 	private SearchService searchService;
+	@Autowired
+	private BookmarkService bookmarkService;
 	
 	@GetMapping(value = "/boardList")
-	public String boardList(Model model) {
+	public String boardList(HttpServletRequest request, Model model) {
 		System.out.println("글목록 보기");
 		
 		List<BoardDto> list=boardService.getAllList();
+		System.out.println("보드 개수: " + list.size());
+		model.addAttribute("length", list.size());
 		model.addAttribute("list", list);
 		model.addAttribute("delBoardCommand", new DelBoardCommand());
+		
+		return "board/boardList";// forward 기능, "redirect:board/boardList"
+	}
+
+	@GetMapping(value = "/boardSearch")
+	public String boardSearch(HttpServletRequest request, Model model, @RequestParam(value = "search_input", required = false) String searchInput) {
+		System.out.println("검색 보드 보기");
+		
+		List<BoardDto> list=null;
+		
+		if (searchInput != null && !searchInput.isEmpty()) {
+			list=boardService.searchBoard(searchInput);
+		}
+		else return "redirect:/board/boardList";
+		model.addAttribute("length", list.size());
+		model.addAttribute("search_input", searchInput);
+		model.addAttribute("list", list);
+		model.addAttribute("delBoardCommand", new DelBoardCommand());
+		
 		return "board/boardList";// forward 기능, "redirect:board/boardList"
 	}
 	
@@ -82,37 +108,11 @@ public class BoardController {
 		return "redirect:/board/boardList";
 	}
 	
-	@PostMapping(value = "/addComment")
-	public String commentInsert(@RequestParam("board_seq") int board_seq,
-	        @RequestParam("commentContent") String commentContent,
-	        HttpServletRequest request, Model model) {
-		
-		System.out.println(board_seq);
-		System.out.println(request.getSession().getAttribute("mdto"));
-		MemberDto mdto = (MemberDto) request.getSession().getAttribute("mdto");
-		
-		if (mdto != null) {
-	        // Create a CommentDto object
-	        CommentDto commentDto = new CommentDto();
-	        commentDto.setBoard_seq(board_seq);
-	        commentDto.setId(mdto.getId());
-	        commentDto.setContent(commentContent);
-	        
-	        // Call the service to save the comment
-	        commentService.addComment(commentDto);
-	        System.out.println(commentDto);
-	    } else {
-	        // If not logged in, redirect to login page
-	        return "redirect:/user/login";
-	    }
-	    
-		return "redirect:/board/boardDetail?board_seq=" + board_seq;
-	}
-	
 	// 상세보기
 	@GetMapping(value = "/boardDetail")
 	public String boardDetail(int board_seq, HttpServletRequest request, Model model) {
-	    BoardDto dto = boardService.getBoard(board_seq);
+	    
+		BoardDto dto = boardService.getBoard(board_seq);
 	    
 	    System.out.println(dto);
 	    // 유효값처리용
@@ -124,18 +124,43 @@ public class BoardController {
 	    
 	    model.addAttribute("bdto", bdto);
 	    
+	    MemberDto mdto = (MemberDto) request.getSession().getAttribute("mdto");
+	    if (mdto != null) {
+	    	BookmarkDto fdto = new BookmarkDto(0,mdto.getId(),board_seq);
+		    System.out.println("id: " + mdto.getId());
+		    System.out.println("board_seq: " + board_seq);
+		    int bookmark = bookmarkService.getBookmark(fdto);
+		    System.out.println("북마크 여부: " + bookmark);
+		    model.addAttribute("bookmark",bookmark);
+	    }
+	    
 	    // 해당 게시물의 댓글 가져오기
 	    List<CommentDto> comments = commentService.getComments(board_seq);
-	    for (CommentDto comment : comments) {
-	        System.out.println(comment);
+	    System.out.println("ㅠㅠ" + comments.size());
+	    for(int i = 0; i < comments.size(); i ++) {
+	    	System.out.println(i+ ": " + comments.get(i).getReplies());
 	    }
-
-		
-		 model.addAttribute("comments", comments);		 
 	    
+		model.addAttribute("comments", comments);		
+		
 	    return "board/boardDetail";
 	}
 
+	@GetMapping(value = "/boardUpdate")
+	public String boardUpdate(int board_seq, HttpServletRequest request, Model model) {
+		BoardDto dto = boardService.getBoard(board_seq);
+	    System.out.println("업데이트 " + dto);
+	    // 유효값처리용
+	    model.addAttribute("updateBoardCommand", new UpdateBoardCommand());
+	    // 출력용
+	    model.addAttribute("dto", dto);
+	    
+	    MemberDto bdto = searchService.getUserwithProfile(dto.getId());
+	    
+	    model.addAttribute("bdto", bdto);
+		return "board/boardUpdate";
+	}
+	
 	
 	//수정하기
 	@PostMapping(value = "/boardUpdate")
@@ -182,6 +207,13 @@ public class BoardController {
 		}
 		boardService.mulDel(delBoardCommand.getSeq());
 		System.out.println("글삭제함");
+		return "redirect:/board/boardList";
+	}
+	
+	@GetMapping(value = "/boardDelete")
+	public String boardDelete(int board_seq, HttpServletRequest request, Model model) {
+		System.out.println("글삭제함");
+		boardService.deleteBoard(board_seq);
 		return "redirect:/board/boardList";
 	}
 }

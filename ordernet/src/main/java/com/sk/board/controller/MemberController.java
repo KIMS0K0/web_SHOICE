@@ -1,5 +1,6 @@
 package com.sk.board.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +21,12 @@ import com.sk.board.command.AddUserCommand;
 import com.sk.board.command.LoginCommand;
 import com.sk.board.dtos.BackgroundDto;
 import com.sk.board.dtos.BoardDto;
+import com.sk.board.dtos.FollowDto;
 import com.sk.board.dtos.MemberDto;
 import com.sk.board.dtos.ProfileDto;
 import com.sk.board.service.BackgroundService;
 import com.sk.board.service.BoardService;
+import com.sk.board.service.FollowService;
 import com.sk.board.service.MemberService;
 import com.sk.board.service.ProfileService;
 
@@ -45,6 +48,8 @@ public class MemberController {
 	
 	@Autowired
 	private ProfileService profileService;
+	
+	@Autowired private FollowService followService;
 	
 	@GetMapping(value = "/addUser")
 	public String addUserForm(Model model) {
@@ -149,13 +154,11 @@ public class MemberController {
 	    model.addAttribute("backgroundDto", backgroundDto);
 	    model.addAttribute("profileDto", profileDto);
 	    
-	    System.out.println(backgroundDto);
-	    System.out.println(profileDto);
-
 	    // 로그인된 사용자의 게시글만 조회
 	    List<BoardDto> list = boardService.getAllMyList(mdto);
 	    model.addAttribute("list", list);
 
+	    
 	    // 마이페이지로 이동
 	    return "member/myPage";
 	}
@@ -188,9 +191,14 @@ public class MemberController {
 	    model.addAttribute("backgroundDto", backgroundDto);
 	    model.addAttribute("profileDto", profileDto);
 	    
-	    System.out.println(backgroundDto);
-	    System.out.println(profileDto);
-
+	    System.out.println("나: " + mdto.getId());
+	    System.out.println("너: " + ydto.getId());
+	    
+	    FollowDto fdto = new FollowDto(0, mdto.getId(),ydto.getId());
+	    int follow = followService.getFollow(fdto);
+	    System.out.println("팔로우 여부: " + follow);
+	    model.addAttribute("follow",follow);
+	    
 	    // 로그인된 사용자의 게시글만 조회
 	    List<BoardDto> list = boardService.getAllMyList(ydto);
 	    model.addAttribute("list", list);
@@ -222,27 +230,28 @@ public class MemberController {
 	//나의 정보 수정
 	@PostMapping("/updateProfile")
 	public String updateProfile(
-			@RequestParam("background") MultipartFile background,
+	        @RequestParam("background") MultipartFile backgroundphoto,
 	        @RequestParam("profilephoto") MultipartFile profilephoto,
 	        @RequestParam("name") String name,
 	        @RequestParam("job") String job,
-	        HttpSession session) {
+	        HttpSession session, HttpServletRequest request, Model model) throws IllegalStateException, IOException {
 
 	    // 로그인한 사용자 정보 가져오기
 	    MemberDto mdto = (MemberDto) session.getAttribute("mdto");
 
-	    // 파일 저장 로직 추가 (생략) - 파일을 저장하고, 저장 경로를 mdto에 설정
-
 	    // 사용자 정보 업데이트
 	    mdto.setName(name);
 	    mdto.setJob(job);
+	    memberService.updateUser(mdto);
 
-	    // 업데이트된 정보로 세션 갱신
-	    session.setAttribute("mdto", mdto);
+	    System.out.println("사진->" + profilephoto);
+	    // 프로필 사진 업데이트
+	    profileService.updateProfile(profilephoto, request, mdto.getId());
+	    backgroundService.updateBackground(backgroundphoto, request, mdto.getId());
 
-	    // 마이페이지로 리디렉션
 	    return "redirect:/user/myPage";
 	}
+
 
 	
 	

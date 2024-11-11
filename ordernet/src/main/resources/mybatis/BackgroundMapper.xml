@@ -5,7 +5,7 @@
 
 	<insert id="insertBackground" parameterType="String">
 	    INSERT INTO BACKGROUND (file_seq, id, origin_name, stored_name)
-	    VALUES (NULL, #{id}, 'WIN_20220925_18_30_28_Pro.jpg', '287720b8-3bc8-45d9-9058-f59b8a3cbd27.jpg');
+	    VALUES (NULL, #{id}, '기본사진.png', '7a6bd959-9af1-433f-9121-082e25456cf0.png');
 	</insert>
 	
 	<select id="getBackground" parameterType="String" resultType="backgroundDto">
@@ -14,6 +14,11 @@
         WHERE id = #{id}
     </select>
 
+	<update id="updateBackground" parameterType="BackgroundDto">
+        UPDATE BACKGROUND
+        SET origin_name=#{origin_name}, stored_name=#{stored_name}
+        WHERE id = #{id}
+    </update>
 </mapper>
 
 
